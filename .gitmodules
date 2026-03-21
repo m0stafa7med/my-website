@@ -1,0 +1,6 @@
+[submodule "my-website-backend"]
+	path = my-website-backend
+	url = git@github.com:m0stafa7med/my-website-backend.git
+[submodule "my-website-frontend"]
+	path = my-website-frontend
+	url = git@github.com:m0stafa7med/my-website-frontend.git
