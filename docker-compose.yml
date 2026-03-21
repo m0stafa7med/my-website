@@ -1,12 +1,11 @@
 services:
   db:
     image: mysql:8.0
+    container_name: my-website-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
       MYSQL_DATABASE: website
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -14,27 +13,45 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - website-internal
 
   backend:
     build: ./my-website-backend
+    container_name: my-website-backend
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: docker
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
-    ports:
-      - "9999:9999"
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - website-internal
+      - traefik-net
 
   frontend:
     build: ./my-website-frontend
+    container_name: my-website-frontend
     restart: unless-stopped
-    ports:
-      - "80:80"
     depends_on:
       - backend
+    networks:
+      - website-internal
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.website-web.rule=Host(`mostafadarwesh.com`) || Host(`www.mostafadarwesh.com`)"
+      - "traefik.http.routers.website-web.entrypoints=websecure"
+      - "traefik.http.routers.website-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.website-web.loadbalancer.server.port=80"
 
 volumes:
   mysql_data:
+
+networks:
+  website-internal:
+    driver: bridge
+  traefik-net:
+    external: true

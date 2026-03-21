@@ -1,0 +1,41 @@
+name: Deploy My Website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/projects/my-website
+
+            # Pull latest changes with submodules
+            git pull origin main --recurse-submodules
+            git submodule update --remote --merge
+
+            # Create .env if not exists
+            if [ ! -f .env ]; then
+              cat > .env << 'ENVEOF'
+            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+            ENVEOF
+            fi
+
+            # Build and deploy
+            docker compose build --no-cache
+            docker compose up -d
+
+            # Clean up old images
+            docker image prune -f
+
+            echo "My Website deployed successfully!"
