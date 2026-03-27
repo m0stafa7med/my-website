@@ -24,6 +24,8 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -49,6 +51,7 @@ services:
 
 volumes:
   mysql_data:
+  uploads_data:
 
 networks:
   website-internal:
