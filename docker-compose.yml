@@ -32,6 +32,7 @@ services:
     networks:
       - website-internal
       - traefik-net
+      - monitoring-net
 
   frontend:
     build: ./my-website-frontend
@@ -57,4 +58,6 @@ networks:
   website-internal:
     driver: bridge
   traefik-net:
+    external: true
+  monitoring-net:
     external: true
