@@ -6,6 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
       MYSQL_DATABASE: website
+      TZ: Africa/Cairo
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -24,6 +25,7 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      TZ: Africa/Cairo
     volumes:
       - uploads_data:/app/uploads
     depends_on:
