@@ -28,6 +28,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
       TZ: Africa/Cairo
+      TMDB_API_KEY: ec604d529843546bf5fa4b0fcf7bc2a6
     volumes:
       - uploads_data:/app/uploads
     depends_on:
